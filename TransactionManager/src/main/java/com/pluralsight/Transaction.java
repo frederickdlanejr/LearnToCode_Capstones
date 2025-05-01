@@ -1,30 +1,29 @@
 package com.pluralsight;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+public class TransactionFileManager {
+    private static final String FILE_NAME = "transactions.csv";
 
-public class Transaction {
-    private LocalDate date;
-    private LocalTime time;
-    private String description;
-    private String vendor;
-    private double amount;
-
-    public Transaction(LocalDate date, LocalTime time, String description, String vendor, double amount) {
-        this.date = date;
-        this.time = time;
-        this.description = description;
-        this.vendor = vendor;
-        this.amount = amount;
+    public static List<Transaction> load() {
+        List<Transaction> transactions = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                transactions.add(Transaction.fromCSV(line));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
+        }
+        return transactions;
     }
 
-    public LocalDate getDate() { return date; }
-    public LocalTime getTime() { return time; }
-    public String getDescription() { return description; }
-    public String getVendor() { return vendor; }
-    public double getAmount() { return amount; }
-
-    public String toString() {
-        return date + " | " + time.withNano(0) + " | " + description + " | " + vendor + " | " + String.format("%.2f", amount);
+    public static void save(Transaction t) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
+            writer.println(t.toCSV());
+        } catch (IOException e) {
+            System.out.println("Error writing to file.");
+        }
     }
 }
