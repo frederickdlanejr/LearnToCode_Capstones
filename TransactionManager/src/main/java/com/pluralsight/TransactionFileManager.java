@@ -12,10 +12,13 @@ public class TransactionFileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                transactions.add(Transaction.fromCSV(line));
+                Transaction t = Transaction.fromCSV(line);
+                if (t != null) {
+                    transactions.add(t);
+                }
             }
         } catch (IOException e) {
-            System.out.println("Error reading file.");
+            System.out.println("File Not Found :(. Restarting :)");
         }
         return transactions;
     }
@@ -24,7 +27,7 @@ public class TransactionFileManager {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
             writer.println(t.toCSV());
         } catch (IOException e) {
-            System.out.println("Error writing to file.");
+            System.out.println("ERROR.");
         }
     }
 }

@@ -19,13 +19,21 @@ public class Transaction {
     }
 
     public static Transaction fromCSV(String line) {
-        String[] parts = line.split("\\|");
-        LocalDate date = LocalDate.parse(parts[0]);
-        LocalTime time = LocalTime.parse(parts[1]);
-        String description = parts[2];
-        String vendor = parts[3];
-        double amount = Double.parseDouble(parts[4]);
-        return new Transaction(date, time, description, vendor, amount);
+        try {
+            String[] parts = line.split("\\|");
+            if (parts.length != 5) {
+                throw new IllegalArgumentException("ERROR: " + line);
+            }
+            LocalDate date = LocalDate.parse(parts[0]);
+            LocalTime time = LocalTime.parse(parts[1]);
+            String description = parts[2];
+            String vendor = parts[3];
+            double amount = Double.parseDouble(parts[4]);
+            return new Transaction(date, time, description, vendor, amount);
+        } catch (Exception e) {
+            System.err.println("ERROR: " + line);
+            return null;
+        }
     }
 
     public String toCSV() {
